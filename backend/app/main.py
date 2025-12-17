@@ -38,7 +38,7 @@ def get_db():
 
 from typing import Dict, Any
 
-@app.get("/campaigns/", response_model=schemas.CampaignPagination)
+@app.get("/campaigns", response_model=schemas.CampaignPagination)
 def read_campaigns(
     skip: int = Query(0, ge=0),
     limit: int = Query(10, ge=1, le=100),
@@ -68,7 +68,7 @@ def read_campaign(campaign_id: str, db: Session = Depends(get_db)):
         raise HTTPException(status_code=404, detail="Campaign not found")
     return campaign
 
-@app.get("/campaigns/search-by-date/", response_model=List[schemas.Campaign])
+@app.get("/campaigns/search-by-date", response_model=List[schemas.Campaign])
 def search_campaigns_by_date(
     start_date: datetime,
     end_date: datetime,
