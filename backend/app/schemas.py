@@ -67,3 +67,9 @@ class CampaignDetail(Campaign):
     sites: List[CampaignSite]
 
     model_config = ConfigDict(from_attributes=True)
+
+class CampaignPagination(BaseModel):
+    data: List[Campaign]
+    total: int
+    page: int
+    pageSize: int

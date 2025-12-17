@@ -18,7 +18,7 @@ def load_data():
     try:
         # Read and clean agrupado data
         df_agrupado = pd.read_csv('data/bd_campanias_agrupado.csv')
-        
+        df_agrupado = df_agrupado.drop_duplicates(subset=['name'])
         # Read and clean periodos data
         df_periodos = pd.read_csv('data/bd_campanias_periodos.csv')
         df_periodos['impactos_periodo_vehiculos'] = df_periodos['impactos_periodo_vehículos'].apply(clean_number)

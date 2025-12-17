@@ -38,7 +38,7 @@ def get_db():
 
 from typing import Dict, Any
 
-@app.get("/campaigns/", response_model=Dict[str, Any])
+@app.get("/campaigns/", response_model=schemas.CampaignPagination)
 def read_campaigns(
     skip: int = Query(0, ge=0),
     limit: int = Query(10, ge=1, le=100),
