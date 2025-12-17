@@ -89,3 +89,6 @@ def search_campaigns_by_date(
         end_date=end_date
     )
     return campaigns
+
+from mangum import Mangum
+handler = Mangum(app)

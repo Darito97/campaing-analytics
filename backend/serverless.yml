@@ -1,0 +1,33 @@
+service: campaign-analytics-api
+
+frameworkVersion: '3'
+
+provider:
+  name: aws
+  runtime: python3.9
+  region: us-east-1
+  memorySize: 512
+  timeout: 30
+  environment:
+    # Add environment variables here if needed
+    # DATABASE_URL: ${env:DATABASE_URL}
+
+functions:
+  api:
+    handler: app.main.handler
+    events:
+      - http:
+          path: /
+          method: any
+      - http:
+          path: /{proxy+}
+          method: any
+
+plugins:
+  - serverless-python-requirements
+
+custom:
+  pythonRequirements:
+    dockerizePip: non-linux # Important for Windows users with pandas/numpy
+    zip: true # Compresses dependencies
+    slim: true # Removes unnecessary files to reduce package size

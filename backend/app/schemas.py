@@ -37,27 +37,27 @@ class CampaignBase(BaseModel):
     tipo_campania: str
     fecha_inicio: date
     fecha_fin: date
-    universo_zona_metro: int
-    impactos_personas: int
-    impactos_vehiculos: int
-    frecuencia_calculada: float
-    frecuencia_promedio: float
-    alcance: int
-    nse_ab: float
-    nse_c: float
-    nse_cmas: float
-    nse_d: float
-    nse_dmas: float
-    nse_e: float
-    edad_0a14: float
-    edad_15a19: float
-    edad_20a24: float
-    edad_25a34: float
-    edad_35a44: float
-    edad_45a64: float
-    edad_65mas: float
-    hombres: float
-    mujeres: float
+    universo_zona_metro: Optional[int] = None
+    impactos_personas: Optional[int] = None
+    impactos_vehiculos: Optional[int] = None
+    frecuencia_calculada: Optional[float] = None
+    frecuencia_promedio: Optional[float] = None
+    alcance: Optional[int] = None
+    nse_ab: Optional[float] = None
+    nse_c: Optional[float] = None
+    nse_cmas: Optional[float] = None
+    nse_d: Optional[float] = None
+    nse_dmas: Optional[float] = None
+    nse_e: Optional[float] = None
+    edad_0a14: Optional[float] = None
+    edad_15a19: Optional[float] = None
+    edad_20a24: Optional[float] = None
+    edad_25a34: Optional[float] = None
+    edad_35a44: Optional[float] = None
+    edad_45a64: Optional[float] = None
+    edad_65mas: Optional[float] = None
+    hombres: Optional[float] = None
+    mujeres: Optional[float] = None
 
 class Campaign(CampaignBase):
     model_config = ConfigDict(from_attributes=True)
