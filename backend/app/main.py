@@ -43,15 +43,17 @@ def read_campaigns(
     skip: int = Query(0, ge=0),
     limit: int = Query(10, ge=1, le=100),
     tipo_campania: Optional[str] = None,
+    start_date: Optional[datetime] = None,
+    end_date: Optional[datetime] = None,
     db: Session = Depends(get_db)
 ):
     """
     Get all campaigns with pagination and optional filtering by campaign type.
     """
-    campaigns = crud.get_campaigns(db, skip=skip, limit=limit, tipo_campania=tipo_campania)
+    campaigns, total = crud.get_campaigns(db, skip=skip, limit=limit, tipo_campania=tipo_campania, start_date=start_date, end_date=end_date)
     return {
         "data": campaigns,
-        "total": len(campaigns),
+        "total": total,
         "page": skip // limit,
         "pageSize": limit
     }
