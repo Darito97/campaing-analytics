@@ -11,8 +11,7 @@ class CampaignPeriod(CampaignPeriodBase):
     id: int
     campaign_name: str
 
-    class Config:
-        orm_mode = True
+    model_config = ConfigDict(from_attributes=True)
 
 class CampaignSiteBase(BaseModel):
     codigo_del_sitio: str
@@ -31,8 +30,7 @@ class CampaignSite(CampaignSiteBase):
     id: int
     campaign_name: str
 
-    class Config:
-        orm_mode = True
+    model_config = ConfigDict(from_attributes=True)
 
 class CampaignBase(BaseModel):
     name: str
@@ -62,12 +60,10 @@ class CampaignBase(BaseModel):
     mujeres: float
 
 class Campaign(CampaignBase):
-    class Config:
-        orm_mode = True
+    model_config = ConfigDict(from_attributes=True)
 
 class CampaignDetail(Campaign):
     periods: List[CampaignPeriod]
     sites: List[CampaignSite]
 
-    class Config:
-        orm_mode = True
+    model_config = ConfigDict(from_attributes=True)
