@@ -1,12 +1,11 @@
-import React from 'react';
 import {
     createColumnHelper,
     flexRender,
     getCoreRowModel,
     useReactTable,
 } from '@tanstack/react-table';
-import { Campaign } from '../types/campaign';
-import { format } from 'date-fns';
+import { Campaign } from '../api/client';
+import { useNavigate } from 'react-router-dom';
 
 const columnHelper = createColumnHelper<Campaign>();
 
@@ -20,19 +19,15 @@ const columns = [
         cell: info => info.getValue(),
     }),
     columnHelper.accessor('fecha_inicio', {
-        header: 'Fecha Inicio',
-        cell: info => format(new Date(info.getValue()), 'dd/MM/yyyy'),
+        header: 'Inicio',
+        cell: info => info.getValue(),
     }),
     columnHelper.accessor('fecha_fin', {
-        header: 'Fecha Fin',
-        cell: info => format(new Date(info.getValue()), 'dd/MM/yyyy'),
+        header: 'Fin',
+        cell: info => info.getValue(),
     }),
     columnHelper.accessor('impactos_personas', {
-        header: 'Impactos (Personas)',
-        cell: info => info.getValue().toLocaleString(),
-    }),
-    columnHelper.accessor('impactos_vehiculos', {
-        header: 'Impactos (Vehículos)',
+        header: 'Impactos',
         cell: info => info.getValue().toLocaleString(),
     }),
     columnHelper.accessor('alcance', {
@@ -41,38 +36,33 @@ const columns = [
     }),
 ];
 
-interface CampaignTableProps {
+interface Props {
     data: Campaign[];
-    onRowClick?: (campaign: Campaign) => void;
+    total: number;
+    page: number;
+    pageSize: number;
+    onPageChange: (newPage: number) => void;
 }
 
-export const CampaignTable: React.FC<CampaignTableProps> = ({
-    data,
-    onRowClick,
-}) => {
+const CampaignTable = ({ data, total, page, pageSize, onPageChange }: Props) => {
+    const navigate = useNavigate();
     const table = useReactTable({
         data,
         columns,
         getCoreRowModel: getCoreRowModel(),
     });
 
+    const totalPages = Math.ceil(total / pageSize);
+
     return (
-        <div className="overflow-x-auto">
+        <div className="bg-white shadow rounded-lg overflow-hidden overflow-x-auto">
             <table className="min-w-full divide-y divide-gray-200">
                 <thead className="bg-gray-50">
                     {table.getHeaderGroups().map(headerGroup => (
                         <tr key={headerGroup.id}>
                             {headerGroup.headers.map(header => (
-                                <th
-                                    key={header.id}
-                                    className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
-                                >
-                                    {header.isPlaceholder
-                                        ? null
-                                        : flexRender(
-                                            header.column.columnDef.header,
-                                            header.getContext()
-                                        )}
+                                <th key={header.id} className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                    {flexRender(header.column.columnDef.header, header.getContext())}
                                 </th>
                             ))}
                         </tr>
@@ -82,24 +72,64 @@ export const CampaignTable: React.FC<CampaignTableProps> = ({
                     {table.getRowModel().rows.map(row => (
                         <tr
                             key={row.id}
-                            onClick={() => onRowClick?.(row.original)}
-                            className="hover:bg-gray-100 cursor-pointer"
+                            onClick={() => navigate(`/campanias/${row.original.name}`)}
+                            className="hover:bg-gray-50 cursor-pointer transition-colors"
                         >
                             {row.getVisibleCells().map(cell => (
-                                <td
-                                    key={cell.id}
-                                    className="px-6 py-4 whitespace-nowrap text-sm text-gray-500"
-                                >
-                                    {flexRender(
-                                        cell.column.columnDef.cell,
-                                        cell.getContext()
-                                    )}
+                                <td key={cell.id} className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                                    {flexRender(cell.column.columnDef.cell, cell.getContext())}
                                 </td>
                             ))}
                         </tr>
                     ))}
                 </tbody>
             </table>
+
+            <div className="bg-white px-4 py-3 flex items-center justify-between border-t border-gray-200 sm:px-6">
+                <div className="flex-1 flex justify-between sm:hidden">
+                    <button
+                        onClick={() => onPageChange(page - 1)}
+                        disabled={page === 0}
+                        className="relative inline-flex items-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 disabled:opacity-50"
+                    >
+                        Previous
+                    </button>
+                    <button
+                        onClick={() => onPageChange(page + 1)}
+                        disabled={page >= totalPages - 1}
+                        className="ml-3 relative inline-flex items-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 disabled:opacity-50"
+                    >
+                        Next
+                    </button>
+                </div>
+                <div className="hidden sm:flex-1 sm:flex sm:items-center sm:justify-between">
+                    <div>
+                        <p className="text-sm text-gray-700">
+                            Mostrando página <span className="font-medium">{page + 1}</span> de <span className="font-medium">{totalPages}</span> ({total} resultados)
+                        </p>
+                    </div>
+                    <div>
+                        <nav className="relative z-0 inline-flex rounded-md shadow-sm -space-x-px gap-2" aria-label="Pagination">
+                            <button
+                                onClick={() => onPageChange(page - 1)}
+                                disabled={page === 0}
+                                className="relative inline-flex items-center px-2 py-2 rounded-l-md border border-gray-300 bg-white text-sm font-medium text-gray-500 hover:bg-gray-50 hover:text-white disabled:text-gray-600 disabled:opacity-50"
+                            >
+                                Anterior
+                            </button>
+                            <button
+                                onClick={() => onPageChange(page + 1)}
+                                disabled={page >= totalPages - 1}
+                                className="relative inline-flex items-center px-2 py-2 rounded-r-md border border-gray-300 bg-white text-sm font-medium text-gray-500 hover:bg-gray-50 hover:text-white disabled:text-gray-600 disabled:opacity-50"
+                            >
+                                Siguiente
+                            </button>
+                        </nav>
+                    </div>
+                </div>
+            </div>
         </div>
     );
-};
+}
+
+export default CampaignTable;
