@@ -38,7 +38,7 @@ jobs:
           pip install -r requirements.txt
       - name: Starts DB
         run: |
-          python -m seed.py
+          python seed.py
       - name: Test with the pytest command
         run: |
           pytest
