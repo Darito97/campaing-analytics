@@ -32,7 +32,16 @@ jobs:
           aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws-region: ${{ secrets.AWS_REGION }}
-
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+      - name: Starts DB
+        run: |
+          python -m seed.py
+      - name: Test with the pytest command
+        run: |
+          pytest
       - name: Build SAM Application
         run: sam build
         
