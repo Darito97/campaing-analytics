@@ -4,10 +4,9 @@ import { getCampaignDetail, CampaignDetail as CampaignDetailType } from '../api/
 import {
     BarChart, Bar, LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, PieChart, Pie, Cell
 } from 'recharts';
-import { Megaphone, MapPin, TrendingUp, Users, PieChart as PieChartIcon, ArrowLeft, Download, FileSpreadsheet } from 'lucide-react';
+import { Megaphone, MapPin, TrendingUp, Users, PieChart as PieChartIcon, ArrowLeft, Download } from 'lucide-react';
 import jsPDF from 'jspdf';
 import html2canvas from 'html2canvas';
-import * as XLSX from 'xlsx';
 
 const COLORS = ['#0088FE', '#00C49F', '#FFBB28', '#FF8042', '#8884d8', '#82ca9d'];
 
