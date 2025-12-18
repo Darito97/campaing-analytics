@@ -17,13 +17,11 @@ def get_campaigns(
     if tipo_campania:
         query = query.filter(models.Campaign.tipo_campania == tipo_campania)
     
-    if start_date and end_date:
-        query = query.filter(
-            and_(
-                models.Campaign.fecha_inicio >= start_date,
-                models.Campaign.fecha_fin <= end_date
-            )
-        )
+    if start_date:
+        query = query.filter(models.Campaign.fecha_inicio >= start_date)
+    
+    if end_date:
+        query = query.filter(models.Campaign.fecha_fin <= end_date)
     
     total = query.count()
     campaings = query.offset(skip).limit(limit).all()
