@@ -4,7 +4,10 @@ import { getCampaignDetail, CampaignDetail as CampaignDetailType } from '../api/
 import {
     BarChart, Bar, LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, PieChart, Pie, Cell
 } from 'recharts';
-import { Megaphone, MapPin, TrendingUp, Users, PieChart as PieChartIcon, ArrowLeft } from 'lucide-react';
+import { Megaphone, MapPin, TrendingUp, Users, PieChart as PieChartIcon, ArrowLeft, Download, FileSpreadsheet } from 'lucide-react';
+import jsPDF from 'jspdf';
+import html2canvas from 'html2canvas';
+import * as XLSX from 'xlsx';
 
 const COLORS = ['#0088FE', '#00C49F', '#FFBB28', '#FF8042', '#8884d8', '#82ca9d'];
 
@@ -13,6 +16,7 @@ const CampaignDetail = () => {
     const navigate = useNavigate();
     const [campaign, setCampaign] = useState<CampaignDetailType | null>(null);
     const [loading, setLoading] = useState(true);
+    const [printing, setPrinting] = useState(false);
 
     useEffect(() => {
         if (!id) return;
@@ -50,15 +54,54 @@ const CampaignDetail = () => {
     const hasAgeData = ageData.some(d => d.value > 0);
     const hasNseData = nseData.some(d => d.value > 0);
 
+    const handleDownloadPDF = async () => {
+        const element = document.getElementById('campaign-detail-content');
+        if (!element) return;
+
+        try {
+            setPrinting(true);
+            element.scrollIntoView({ behavior: 'auto' });
+            await new Promise((resolve) => setTimeout(resolve, 1000));
+            const canvas = await html2canvas(element, {
+                scale: 2,
+                ignoreElements: (element) => element.classList.contains('no-print')
+            });
+            const imgData = canvas.toDataURL('image/png');
+            const pdf = new jsPDF('p', 'mm', 'a4');
+            const pdfWidth = pdf.internal.pageSize.getWidth();
+            const pdfHeight = (canvas.height * pdfWidth) / canvas.width;
+
+            pdf.addImage(imgData, 'PNG', 3, 3, pdfWidth, pdfHeight);
+            pdf.save(`reporte_${campaign?.name || 'campana'}.pdf`);
+        } catch (error) {
+            console.error("Error generating PDF:", error);
+        } finally {
+            setPrinting(false);
+        }
+    };
+
+
     return (
         <div className="min-h-screen p-4 md:p-8 bg-white rounded-md">
-            <div className="max-w-7xl mx-auto">
-                <button
-                    onClick={() => navigate('/')}
-                    className="mb-4 flex items-center text-indigo-600 hover:text-indigo-800 text-white hover:text-white font-medium gap-2"
-                >
-                    <ArrowLeft className="w-4 h-4" /> Volver al Dashboard
-                </button>
+            <div className="max-w-7xl mx-auto" id="campaign-detail-content">
+                <div className="flex flex-col md:flex-row md:items-center justify-between mb-4 gap-4 no-print">
+                    <button
+                        onClick={() => navigate('/')}
+                        className="flex items-center text-white hover:text-white font-medium gap-2"
+                    >
+                        <ArrowLeft className="w-4 h-4" /> Volver al Dashboard
+                    </button>
+
+                    <div className="flex gap-2">
+                        <button
+                            onClick={handleDownloadPDF}
+                            disabled={printing}
+                            className="flex items-center gap-2 px-4 py-2 bg-red-600 text-white rounded-md hover:bg-red-700 transition-colors shadow-sm"
+                        >
+                            <Download className="w-4 h-4" /> PDF
+                        </button>
+                    </div>
+                </div>
 
                 <div className="bg-white p-4 md:p-6 rounded-lg shadow">
                     <h1 className="text-xl sm:text-2xl md:text-3xl font-bold text-gray-900 mb-2 flex items-center gap-2">
@@ -72,11 +115,8 @@ const CampaignDetail = () => {
                         <div><span className="font-semibold">Impactos Total:</span> {campaign.impactos_personas.toLocaleString()}</div>
                     </div>
                 </div>
-
-                {/* Charts Grid */}
                 <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
 
-                    {/* Sites Summary */}
                     {hasSites && (
                         <div className="bg-white p-4 md:p-6">
                             <h2 className="text-xl font-bold mb-4 text-gray-800 flex items-center gap-2">
@@ -99,7 +139,6 @@ const CampaignDetail = () => {
                         </div>
                     )}
 
-                    {/* Periods Summary */}
                     {hasPeriods && (
                         <div className="bg-white p-4 md:p-6">
                             <h2 className="text-xl font-bold mb-4 text-gray-800 flex items-center gap-2">
@@ -122,7 +161,6 @@ const CampaignDetail = () => {
                         </div>
                     )}
 
-                    {/* Demographics - Age */}
                     {hasAgeData && (
                         <div className="bg-white p-4 md:p-6">
                             <h2 className="text-xl font-bold mb-4 text-gray-800 flex items-center gap-2">
@@ -143,7 +181,6 @@ const CampaignDetail = () => {
                         </div>
                     )}
 
-                    {/* Demographics - NSE */}
                     {hasNseData && (
                         <div className="bg-white p-6 rounded-lg shadow">
                             <h2 className="text-xl font-bold mb-4 text-gray-800 flex items-center gap-2">
