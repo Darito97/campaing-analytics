@@ -16,7 +16,6 @@ const CampaignDetail = () => {
     const [campaign, setCampaign] = useState<CampaignDetailType | null>(null);
     const [loading, setLoading] = useState(true);
 
-    // Ref for printing
     const componentRef = useRef<HTMLDivElement>(null);
 
     const handlePrint = useReactToPrint({
@@ -35,7 +34,6 @@ const CampaignDetail = () => {
     if (loading) return <div className="p-8 text-center">Loading...</div>;
     if (!campaign) return <div className="p-8 text-center text-red-600">Campaign not found</div>;
 
-    // Transform data for demographics charts (omitted for brevity, same as before)
     const ageData = [
         { name: '0-14', value: campaign.edad_0a14 },
         { name: '15-19', value: campaign.edad_15a19 },
@@ -63,7 +61,6 @@ const CampaignDetail = () => {
 
     return (
         <div className="min-h-screen p-4 md:p-8 bg-white rounded-md">
-            {/* Action Bar (Not Printed) */}
             <div className="max-w-7xl mx-auto flex flex-col md:flex-row md:items-center justify-between mb-4 gap-4 no-print">
                 <button
                     onClick={() => navigate(-1)}
@@ -82,7 +79,6 @@ const CampaignDetail = () => {
                 </div>
             </div>
 
-            {/* Printable Content */}
             <div className="max-w-7xl mx-auto" ref={componentRef} id="campaign-detail-content">
 
 
@@ -196,10 +192,8 @@ const CampaignDetail = () => {
 
                 </div>
 
-                {/* Data Tables Section */}
                 <div className="mt-12 space-y-12 no-print-break">
 
-                    {/* Sites Table */}
                     {hasSites && (
                         <div>
                             <h2 className="text-xl font-bold mb-4 text-gray-800 border-b pb-2">Detalle de Sitios</h2>
@@ -230,7 +224,6 @@ const CampaignDetail = () => {
                         </div>
                     )}
 
-                    {/* Periods Table */}
                     {hasPeriods && (
                         <div>
                             <h2 className="text-xl font-bold mb-4 text-gray-800 border-b pb-2">Detalle por Periodos</h2>
@@ -257,7 +250,6 @@ const CampaignDetail = () => {
                         </div>
                     )}
 
-                    {/* Demographics Tables */}
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
                         {hasAgeData && (
                             <div>
