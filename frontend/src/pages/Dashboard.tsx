@@ -65,7 +65,7 @@ const Dashboard = () => {
     return (
         <div className="min-h-screen p-8 bg-white rounded-md">
             <div className="max-w-7xl mx-auto">
-                <div className="flex items-center justify-between mb-8">
+                <div className="flex gap-2 flex-wrap items-center justify-between mb-8">
                     <div className="flex items-center gap-2">
                         <Megaphone className="w-6 h-6 md:w-8 md:h-8 text-indigo-600" />
                         <h1 className="text-3xl font-bold text-gray-900">Campaign Analytics Dashboard</h1>
