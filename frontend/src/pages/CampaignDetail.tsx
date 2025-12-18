@@ -211,6 +211,116 @@ const CampaignDetail = () => {
                     )}
 
                 </div>
+
+                {/* Data Tables Section */}
+                <div className="mt-12 space-y-12 no-print-break">
+
+                    {/* Sites Table */}
+                    {hasSites && (
+                        <div>
+                            <h2 className="text-xl font-bold mb-4 text-gray-800 border-b pb-2">Detalle de Sitios</h2>
+                            <div className="overflow-x-auto">
+                                <table className="min-w-full divide-y divide-gray-200">
+                                    <thead className="bg-gray-50">
+                                        <tr>
+                                            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Código</th>
+                                            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Municipio</th>
+                                            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Formato</th>
+                                            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Impactos (Mes)</th>
+                                            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Alcance (Mes)</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody className="bg-white divide-y divide-gray-200">
+                                        {campaign.sites.map((site) => (
+                                            <tr key={site.id}>
+                                                <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">{site.codigo_del_sitio}</td>
+                                                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{site.municipio}</td>
+                                                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{site.tipo_de_mueble}</td>
+                                                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{site.impactos_mensuales?.toLocaleString()}</td>
+                                                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{site.alcance_mensual?.toLocaleString()}</td>
+                                            </tr>
+                                        ))}
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    )}
+
+                    {/* Periods Table */}
+                    {hasPeriods && (
+                        <div>
+                            <h2 className="text-xl font-bold mb-4 text-gray-800 border-b pb-2">Detalle por Periodos</h2>
+                            <div className="overflow-x-auto">
+                                <table className="min-w-full divide-y divide-gray-200">
+                                    <thead className="bg-gray-50">
+                                        <tr>
+                                            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Periodo</th>
+                                            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Impactos Personas</th>
+                                            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Impactos Vehículos</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody className="bg-white divide-y divide-gray-200">
+                                        {campaign.periods.map((period) => (
+                                            <tr key={period.id}>
+                                                <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">{period.period}</td>
+                                                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{period.impactos_periodo_personas?.toLocaleString()}</td>
+                                                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{period.impactos_periodo_vehiculos?.toLocaleString()}</td>
+                                            </tr>
+                                        ))}
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    )}
+
+                    {/* Demographics Tables */}
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                        {hasAgeData && (
+                            <div>
+                                <h2 className="text-xl font-bold mb-4 text-gray-800 border-b pb-2">Datos Demográficos: Edad</h2>
+                                <table className="min-w-full divide-y divide-gray-200">
+                                    <thead className="bg-gray-50">
+                                        <tr>
+                                            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Rango</th>
+                                            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Valor</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody className="bg-white divide-y divide-gray-200">
+                                        {ageData.map((d, idx) => (
+                                            <tr key={idx}>
+                                                <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">{d.name}</td>
+                                                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{d.value?.toLocaleString()}</td>
+                                            </tr>
+                                        ))}
+                                    </tbody>
+                                </table>
+                            </div>
+                        )}
+
+                        {hasNseData && (
+                            <div>
+                                <h2 className="text-xl font-bold mb-4 text-gray-800 border-b pb-2">Datos Demográficos: NSE</h2>
+                                <table className="min-w-full divide-y divide-gray-200">
+                                    <thead className="bg-gray-50">
+                                        <tr>
+                                            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Nivel</th>
+                                            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Valor</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody className="bg-white divide-y divide-gray-200">
+                                        {nseData.map((d, idx) => (
+                                            <tr key={idx}>
+                                                <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">{d.name}</td>
+                                                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{d.value?.toLocaleString()}</td>
+                                            </tr>
+                                        ))}
+                                    </tbody>
+                                </table>
+                            </div>
+                        )}
+                    </div>
+
+                </div>
             </div>
         </div>
     );
