@@ -60,7 +60,7 @@ const CampaignDetail = () => {
         try {
             setPrinting(true);
             element.scrollIntoView({ behavior: 'auto' });
-            await new Promise((resolve) => setTimeout(resolve, 1000));
+            await new Promise((resolve) => setTimeout(resolve, 2000));
             const canvas = await html2canvas(element, {
                 scale: 2,
                 ignoreElements: (element) => element.classList.contains('no-print')
@@ -85,7 +85,7 @@ const CampaignDetail = () => {
             <div className="max-w-7xl mx-auto" id="campaign-detail-content">
                 <div className="flex flex-col md:flex-row md:items-center justify-between mb-4 gap-4 no-print">
                     <button
-                        onClick={() => navigate('/')}
+                        onClick={() => navigate(-1)}
                         className="flex items-center text-white hover:text-white font-medium gap-2"
                     >
                         <ArrowLeft className="w-4 h-4" /> Volver al Dashboard

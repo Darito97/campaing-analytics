@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 import { getCampaigns, Campaign } from '../api/client';
 import CampaignFilters from '../components/CampaignFilters';
 import CampaignTable from '../components/CampaignTable';
@@ -7,9 +7,12 @@ import { Megaphone, Plus } from 'lucide-react';
 
 const Dashboard = () => {
     const navigate = useNavigate();
+    const [searchParams, setSearchParams] = useSearchParams();
+    const initialPage = parseInt(searchParams.get('page') || '0', 10);
+
     const [data, setData] = useState<Campaign[]>([]);
     const [total, setTotal] = useState(0);
-    const [page, setPage] = useState(0);
+    const [page, setPage] = useState(initialPage);
     const [loading, setLoading] = useState(true);
 
     interface FilterState {
@@ -36,11 +39,20 @@ const Dashboard = () => {
 
     useEffect(() => {
         fetchData();
+        // Update URL when page changes
+        setSearchParams(params => {
+            params.set('page', page.toString());
+            return params;
+        });
     }, [page, filters]);
 
     const handleFilter = (newFilters: any) => {
         setFilters(newFilters);
         setPage(0);
+    };
+
+    const handlePageChange = (newPage: number) => {
+        setPage(newPage);
     };
 
     return (
@@ -69,7 +81,7 @@ const Dashboard = () => {
                         total={total}
                         page={page}
                         pageSize={pageSize}
-                        onPageChange={setPage}
+                        onPageChange={handlePageChange}
                     />
                 )}
             </div>
