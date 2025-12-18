@@ -64,7 +64,7 @@ const CampaignDetail = () => {
             <div className="max-w-7xl mx-auto flex flex-col md:flex-row md:items-center justify-between mb-4 gap-4 no-print">
                 <button
                     onClick={() => navigate(-1)}
-                    className="flex items-center text-gray-600 hover:text-gray-900 font-medium gap-2"
+                    className="flex items-center text-white hover:text-white font-medium gap-2"
                 >
                     <ArrowLeft className="w-4 h-4" /> Volver al Dashboard
                 </button>
