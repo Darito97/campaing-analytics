@@ -196,3 +196,35 @@ select {
   font-size: 0.875rem;
   margin-top: 0.25rem;
 }
+
+@media print {
+  @page {
+    margin: 20mm;
+    size: auto;
+  }
+
+  .no-print {
+    display: none !important;
+  }
+
+  body {
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+
+  /* Reset body padding/margin used in layout */
+  .app-container,
+  #root {
+    padding: 0 !important;
+    margin: 0 !important;
+    max-width: none !important;
+    width: 100% !important;
+  }
+
+  /* Avoid page breaks inside charts/tables */
+  .recharts-wrapper,
+  .table-container,
+  .grid {
+    break-inside: avoid;
+  }
+}

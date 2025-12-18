@@ -1,12 +1,12 @@
+import { useRef } from 'react';
+import { useReactToPrint } from 'react-to-print';
 import { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { getCampaignDetail, CampaignDetail as CampaignDetailType } from '../api/client';
 import {
     BarChart, Bar, LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, PieChart, Pie, Cell
 } from 'recharts';
-import { Megaphone, MapPin, TrendingUp, Users, PieChart as PieChartIcon, ArrowLeft, Download } from 'lucide-react';
-import jsPDF from 'jspdf';
-import html2canvas from 'html2canvas';
+import { Megaphone, MapPin, TrendingUp, Users, PieChart as PieChartIcon, ArrowLeft, Printer } from 'lucide-react';
 
 const COLORS = ['#0088FE', '#00C49F', '#FFBB28', '#FF8042', '#8884d8', '#82ca9d'];
 
@@ -15,7 +15,14 @@ const CampaignDetail = () => {
     const navigate = useNavigate();
     const [campaign, setCampaign] = useState<CampaignDetailType | null>(null);
     const [loading, setLoading] = useState(true);
-    const [printing, setPrinting] = useState(false);
+
+    // Ref for printing
+    const componentRef = useRef<HTMLDivElement>(null);
+
+    const handlePrint = useReactToPrint({
+        contentRef: componentRef,
+        documentTitle: `Reporte - ${campaign?.name || 'Campaña'}`,
+    });
 
     useEffect(() => {
         if (!id) return;
@@ -28,7 +35,7 @@ const CampaignDetail = () => {
     if (loading) return <div className="p-8 text-center">Loading...</div>;
     if (!campaign) return <div className="p-8 text-center text-red-600">Campaign not found</div>;
 
-    // Transform data for demographics charts
+    // Transform data for demographics charts (omitted for brevity, same as before)
     const ageData = [
         { name: '0-14', value: campaign.edad_0a14 },
         { name: '15-19', value: campaign.edad_15a19 },
@@ -53,54 +60,31 @@ const CampaignDetail = () => {
     const hasAgeData = ageData.some(d => d.value > 0);
     const hasNseData = nseData.some(d => d.value > 0);
 
-    const handleDownloadPDF = async () => {
-        const element = document.getElementById('campaign-detail-content');
-        if (!element) return;
-
-        try {
-            setPrinting(true);
-            element.scrollIntoView({ behavior: 'auto' });
-            await new Promise((resolve) => setTimeout(resolve, 2000));
-            const canvas = await html2canvas(element, {
-                scale: 2,
-                ignoreElements: (element) => element.classList.contains('no-print')
-            });
-            const imgData = canvas.toDataURL('image/png');
-            const pdf = new jsPDF('p', 'mm', 'a4');
-            const pdfWidth = pdf.internal.pageSize.getWidth();
-            const pdfHeight = (canvas.height * pdfWidth) / canvas.width;
-
-            pdf.addImage(imgData, 'PNG', 3, 3, pdfWidth, pdfHeight);
-            pdf.save(`reporte_${campaign?.name || 'campana'}.pdf`);
-        } catch (error) {
-            console.error("Error generating PDF:", error);
-        } finally {
-            setPrinting(false);
-        }
-    };
-
 
     return (
         <div className="min-h-screen p-4 md:p-8 bg-white rounded-md">
-            <div className="max-w-7xl mx-auto" id="campaign-detail-content">
-                <div className="flex flex-col md:flex-row md:items-center justify-between mb-4 gap-4 no-print">
-                    <button
-                        onClick={() => navigate(-1)}
-                        className="flex items-center text-white hover:text-white font-medium gap-2"
-                    >
-                        <ArrowLeft className="w-4 h-4" /> Volver al Dashboard
-                    </button>
+            {/* Action Bar (Not Printed) */}
+            <div className="max-w-7xl mx-auto flex flex-col md:flex-row md:items-center justify-between mb-4 gap-4 no-print">
+                <button
+                    onClick={() => navigate(-1)}
+                    className="flex items-center text-gray-600 hover:text-gray-900 font-medium gap-2"
+                >
+                    <ArrowLeft className="w-4 h-4" /> Volver al Dashboard
+                </button>
 
-                    <div className="flex gap-2">
-                        <button
-                            onClick={handleDownloadPDF}
-                            disabled={printing}
-                            className="flex items-center gap-2 px-4 py-2 bg-red-600 text-white rounded-md hover:bg-red-700 transition-colors shadow-sm"
-                        >
-                            <Download className="w-4 h-4" /> PDF
-                        </button>
-                    </div>
+                <div className="flex gap-2">
+                    <button
+                        onClick={() => handlePrint()}
+                        className="flex items-center gap-2 px-4 py-2 bg-indigo-600 text-white rounded-md hover:bg-indigo-700 transition-colors shadow-sm"
+                    >
+                        <Printer className="w-4 h-4" /> Imprimir / Guardar PDF
+                    </button>
                 </div>
+            </div>
+
+            {/* Printable Content */}
+            <div className="max-w-7xl mx-auto" ref={componentRef} id="campaign-detail-content">
+
 
                 <div className="bg-white p-4 md:p-6 rounded-lg shadow">
                     <h1 className="text-xl sm:text-2xl md:text-3xl font-bold text-gray-900 mb-2 flex items-center gap-2">
