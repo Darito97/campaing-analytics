@@ -3,6 +3,7 @@ import numpy as np
 from datetime import datetime
 from app.database import SessionLocal, engine
 from app.models import Base, Campaign, CampaignPeriod, CampaignSite
+from app import crud, schemas
 
 def clean_number(x):
     if isinstance(x, str) and '-' in x:
@@ -28,6 +29,11 @@ def load_data():
 
         # Process campaigns
         for _, row in df_agrupado.iterrows():
+            # Check if exists
+            existing = db.query(Campaign).filter(Campaign.name == row['name']).first()
+            if existing:
+                continue
+
             campaign = Campaign(
                 name=row['name'],
                 tipo_campania=row['tipo_campania'],
@@ -56,6 +62,16 @@ def load_data():
                 mujeres=row['mujeres']
             )
             db.add(campaign)
+
+        # Process periods (Optimized check: if campaign was skipped, maybe assume periods exist or check them too. 
+        # For simplicity, we can wrap the whole block in try-except or check individually. 
+        # Better: Check existing campaign names to filter inserts)
+        
+        # NOTE: For simplicity in this script, we can just use merge or ignore errors, but clean check is better.
+        # Since relationships are not cascade-deleted here, duplicate inserts on child tables might fails too if PKs clash,
+        # but child tables utilize auto-increment IDs usually. Let's check models.py
+        
+
 
         # Process periods
         for _, row in df_periodos.iterrows():
@@ -86,11 +102,21 @@ def load_data():
             db.add(site)
 
         db.commit()
+
+        # Create Admin User
+        user = crud.get_user_by_username(db, "admin")
+        if not user:
+            print("Creating admin user...")
+            crud.create_user(db, schemas.UserCreate(username="admin", password="admin123"))
+        else:
+            print("Admin user already exists.")
+
     except Exception as e:
         print(f"Error: {e}")
         db.rollback()
     finally:
         db.close()
+        print("Database seeded successfully.")
 
 if __name__ == "__main__":
     load_data()

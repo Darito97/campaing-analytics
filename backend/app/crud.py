@@ -95,4 +95,17 @@ def create_campaign_with_details(db: Session, campaign: schemas.CampaignCreate):
 
     db.commit()
     db.refresh(db_campaign)
+    db.refresh(db_campaign)
     return db_campaign
+
+def get_user_by_username(db: Session, username: str):
+    return db.query(models.User).filter(models.User.username == username).first()
+
+def create_user(db: Session, user: schemas.UserCreate):
+    from . import auth
+    hashed_password = auth.get_password_hash(user.password)
+    db_user = models.User(username=user.username, hashed_password=hashed_password)
+    db.add(db_user)
+    db.commit()
+    db.refresh(db_user)
+    return db_user

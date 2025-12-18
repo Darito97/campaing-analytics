@@ -5,6 +5,7 @@ numpy
 pandas
 python-multipart
 python-jose[cryptography]
+bcrypt==3.2.2
 passlib[bcrypt]
 pytest
 httpx

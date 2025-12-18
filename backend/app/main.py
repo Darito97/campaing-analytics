@@ -1,8 +1,9 @@
-from fastapi import FastAPI, Depends, HTTPException, Query
+from fastapi import FastAPI, Depends, HTTPException, Query, status
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.security import OAuth2PasswordBearer, OAuth2PasswordRequestForm
 from typing import List, Optional
-from datetime import datetime
-from . import models, schemas, crud
+from datetime import datetime, timedelta
+from . import models, schemas, crud, auth
 from .database import SessionLocal, engine
 from sqlalchemy.orm import Session
 
@@ -10,23 +11,7 @@ models.Base.metadata.create_all(bind=engine)
 
 app = FastAPI(title="Campaign Analytics API")
 
-@app.get("/")
-def read_root():
-    return {"message": "Welcome to Campaign Analytics API"}
-
-@app.get("/health")
-def health_check():
-    return {"status": "ok"}
-
-
-# CORS middleware configuration
-app.add_middleware(
-    CORSMiddleware,
-    allow_origins=["*"],  # In production, replace with actual frontend URL
-    allow_credentials=True,
-    allow_methods=["*"],
-    allow_headers=["*"],
-)
+oauth2_scheme = OAuth2PasswordBearer(tokenUrl="token")
 
 # Dependency to get DB session
 def get_db():
@@ -36,7 +21,59 @@ def get_db():
     finally:
         db.close()
 
-from typing import Dict, Any
+def get_current_user(token: str = Depends(oauth2_scheme), db: Session = Depends(get_db)):
+    credentials_exception = HTTPException(
+        status_code=status.HTTP_401_UNAUTHORIZED,
+        detail="Could not validate credentials",
+        headers={"WWW-Authenticate": "Bearer"},
+    )
+    try:
+        payload = auth.jwt.decode(token, auth.SECRET_KEY, algorithms=[auth.ALGORITHM])
+        username: str = payload.get("sub")
+        if username is None:
+            raise credentials_exception
+        token_data = schemas.TokenData(username=username)
+    except auth.JWTError:
+        raise credentials_exception
+    user = crud.get_user_by_username(db, username=token_data.username)
+    if user is None:
+        raise credentials_exception
+    return user
+
+@app.on_event("startup")
+def startup_event():
+    db = SessionLocal()
+    try:
+        user = crud.get_user_by_username(db, "admin")
+        if not user:
+            print("Creating admin user...")
+            crud.create_user(db, schemas.UserCreate(username="admin", password="admin123"))
+    finally:
+        db.close()
+
+@app.get("/")
+def read_root():
+    return {"message": "Welcome to Campaign Analytics API"}
+
+@app.post("/token", response_model=schemas.Token)
+def login_for_access_token(form_data: OAuth2PasswordRequestForm = Depends(), db: Session = Depends(get_db)):
+    user = crud.get_user_by_username(db, form_data.username)
+    if not user or not auth.verify_password(form_data.password, user.hashed_password):
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Incorrect username or password",
+            headers={"WWW-Authenticate": "Bearer"},
+        )
+    access_token_expires = timedelta(minutes=auth.ACCESS_TOKEN_EXPIRE_MINUTES)
+    access_token = auth.create_access_token(
+        data={"sub": user.username}, expires_delta=access_token_expires
+    )
+    return {"access_token": access_token, "token_type": "bearer"}
+
+@app.get("/health")
+def health_check():
+    return {"status": "ok"}
+
 
 @app.get("/campaigns", response_model=schemas.CampaignPagination)
 def read_campaigns(
@@ -59,7 +96,7 @@ def read_campaigns(
     }
 
 @app.post("/campaigns", response_model=schemas.Campaign)
-def create_campaign(campaign: schemas.CampaignCreate, db: Session = Depends(get_db)):
+def create_campaign(campaign: schemas.CampaignCreate, db: Session = Depends(get_db), current_user: schemas.User = Depends(get_current_user)):
     """
     Create a new campaign with all its details (sites, periods, demographics).
     """

@@ -7,6 +7,25 @@ const api = axios.create({
 });
 
 // Campaign Types
+export interface LoginCredentials {
+    username: string;
+    password: string;
+}
+
+export interface LoginResponse {
+    access_token: string;
+    token_type: string;
+}
+
+// Request Interceptor to add Token
+api.interceptors.request.use((config) => {
+    const token = localStorage.getItem("token");
+    if (token) {
+        config.headers.Authorization = `Bearer ${token}`;
+    }
+    return config;
+});
+
 export interface Campaign {
   name: string;
   tipo_campania: string;
@@ -104,6 +123,15 @@ export interface CampaignCreate extends Campaign {
 
 export const createCampaign = async (data: CampaignCreate): Promise<Campaign> => {
     const response = await api.post<Campaign>('/campaigns', data);
+    return response.data;
+};
+
+export const login = async (credentials: LoginCredentials): Promise<LoginResponse> => {
+    const formData = new FormData();
+    formData.append('username', credentials.username);
+    formData.append('password', credentials.password);
+    
+    const response = await api.post<LoginResponse>('/token', formData);
     return response.data;
 };
 
