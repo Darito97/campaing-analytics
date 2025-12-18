@@ -35,7 +35,7 @@ npm install
 ```bash
 npm run dev
 ```
-Y con esto estaria listo el frontend para realizar cualquier modificacion
+Y con esto estaria listo el frontend para realizar cualquier modificacion y disponible para probar en el url local: http://localhost:5173/
 
 #### Opcional:
 Si necesitas verificar las pruebas necesitas hacer lo siguiente:
