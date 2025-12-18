@@ -1,10 +1,12 @@
 import { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { getCampaigns, Campaign } from '../api/client';
 import CampaignFilters from '../components/CampaignFilters';
 import CampaignTable from '../components/CampaignTable';
-import { Megaphone } from 'lucide-react';
+import { Megaphone, Plus } from 'lucide-react';
 
 const Dashboard = () => {
+    const navigate = useNavigate();
     const [data, setData] = useState<Campaign[]>([]);
     const [total, setTotal] = useState(0);
     const [page, setPage] = useState(0);
@@ -44,9 +46,18 @@ const Dashboard = () => {
     return (
         <div className="min-h-screen p-8 bg-white rounded-md">
             <div className="max-w-7xl mx-auto">
-                <div className="flex items-center gap-2 mb-8">
-                    <Megaphone className="w-6 h-6 md:w-8 md:h-8 text-indigo-600" />
-                    <h1 className="text-3xl font-bold text-gray-900">Campaign Analytics Dashboard</h1>
+                <div className="flex items-center justify-between mb-8">
+                    <div className="flex items-center gap-2">
+                        <Megaphone className="w-6 h-6 md:w-8 md:h-8 text-indigo-600" />
+                        <h1 className="text-3xl font-bold text-gray-900">Campaign Analytics Dashboard</h1>
+                    </div>
+                    <button
+                        onClick={() => navigate('/campaigns/new')}
+                        className="flex items-center gap-2 bg-indigo-600 text-white px-4 py-2 rounded-md hover:bg-indigo-700 transition-colors shadow-sm"
+                    >
+                        <Plus className="w-5 h-5" />
+                        Crear Campaña
+                    </button>
                 </div>
                 <CampaignFilters onFilter={handleFilter} />
 

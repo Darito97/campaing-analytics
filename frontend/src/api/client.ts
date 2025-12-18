@@ -93,4 +93,18 @@ export const getCampaignDetail = async (id: string): Promise<CampaignDetail> => 
   return response.data;
 };
 
+// Creation Types
+export interface CampaignSiteCreate extends Omit<CampaignSite, 'id' | 'campaign_name'> {}
+export interface CampaignPeriodCreate extends Omit<CampaignPeriod, 'id' | 'campaign_name'> {}
+
+export interface CampaignCreate extends Campaign {
+    sites: CampaignSiteCreate[];
+    periods: CampaignPeriodCreate[];
+}
+
+export const createCampaign = async (data: CampaignCreate): Promise<Campaign> => {
+    const response = await api.post<Campaign>('/campaigns', data);
+    return response.data;
+};
+
 export default api;

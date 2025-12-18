@@ -59,6 +59,16 @@ class CampaignBase(BaseModel):
     hombres: Optional[float] = None
     mujeres: Optional[float] = None
 
+class CampaignSiteCreate(CampaignSiteBase):
+    pass
+
+class CampaignPeriodCreate(CampaignPeriodBase):
+    pass
+
+class CampaignCreate(CampaignBase):
+    sites: List[CampaignSiteCreate] = []
+    periods: List[CampaignPeriodCreate] = []
+
 class Campaign(CampaignBase):
     model_config = ConfigDict(from_attributes=True)
 

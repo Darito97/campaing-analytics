@@ -58,6 +58,17 @@ def read_campaigns(
         "pageSize": limit
     }
 
+@app.post("/campaigns", response_model=schemas.Campaign)
+def create_campaign(campaign: schemas.CampaignCreate, db: Session = Depends(get_db)):
+    """
+    Create a new campaign with all its details (sites, periods, demographics).
+    """
+    existing_campaign = crud.get_campaign(db, campaign_id=campaign.name)
+    if existing_campaign:
+        raise HTTPException(status_code=400, detail="Campaign with this name already exists")
+    
+    return crud.create_campaign_with_details(db=db, campaign=campaign)
+
 @app.get("/campaigns/{campaign_id}", response_model=schemas.CampaignDetail)
 def read_campaign(campaign_id: str, db: Session = Depends(get_db)):
     """
