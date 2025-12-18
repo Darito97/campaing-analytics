@@ -69,14 +69,12 @@ const CampaignDetail = () => {
                     <ArrowLeft className="w-4 h-4" /> Volver al Dashboard
                 </button>
 
-                <div className="flex gap-2">
-                    <button
-                        onClick={() => handlePrint()}
-                        className="flex items-center gap-2 px-4 py-2 bg-indigo-600 text-white rounded-md hover:bg-indigo-700 transition-colors shadow-sm"
-                    >
-                        <Printer className="w-4 h-4" /> Imprimir / Guardar PDF
-                    </button>
-                </div>
+                <button
+                    onClick={() => handlePrint()}
+                    className="flex items-center gap-2 px-4 py-2 bg-indigo-600 text-white rounded-md hover:bg-indigo-700 transition-colors shadow-sm"
+                >
+                    <Printer className="w-4 h-4" /> Imprimir / Guardar PDF
+                </button>
             </div>
 
             <div className="max-w-7xl mx-auto" ref={componentRef} id="campaign-detail-content">
