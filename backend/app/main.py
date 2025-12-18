@@ -11,6 +11,15 @@ models.Base.metadata.create_all(bind=engine)
 
 app = FastAPI(title="Campaign Analytics API")
 
+# CORS middleware configuration
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],  # In production, replace with actual frontend URL
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="token")
 
 # Dependency to get DB session

@@ -36,6 +36,7 @@ const App = () => {
                             <CampaignDetail />
                         </ProtectedRoute>
                     } />
+                    <Route path="*" element={<Navigate to="/" replace />} />
                 </Routes>
             </BrowserRouter>
         </AuthProvider>

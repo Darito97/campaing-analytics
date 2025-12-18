@@ -127,11 +127,17 @@ export const createCampaign = async (data: CampaignCreate): Promise<Campaign> =>
 };
 
 export const login = async (credentials: LoginCredentials): Promise<LoginResponse> => {
-    const formData = new FormData();
-    formData.append('username', credentials.username);
-    formData.append('password', credentials.password);
+    // Send as x-www-form-urlencoded for OAuth2 standard
+    const params = new URLSearchParams();
+    params.append('username', credentials.username);
+    params.append('password', credentials.password);
     
-    const response = await api.post<LoginResponse>('/token', formData);
+    // Explicitly check for slash command or formatting issues
+    const response = await api.post<LoginResponse>('/token', params, {
+        headers: {
+            'Content-Type': 'application/x-www-form-urlencoded'
+        }
+    });
     return response.data;
 };
 

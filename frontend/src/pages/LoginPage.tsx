@@ -26,8 +26,8 @@ const LoginPage = () => {
     };
 
     return (
-        <div className="min-h-screen flex items-center justify-center bg-gradient-to-b from-red-700 to-green-900 overflow-hidden relative">
-            {/* Snow Effect (Simple CSS Animation simulation with dots) */}
+        <div className="min-h-screen w-full flex items-center justify-center bg-gradient-to-b from-red-700 to-green-900 overflow-hidden relative">
+
             <div className="absolute inset-0 pointer-events-none opacity-20"
                 style={{
                     backgroundImage: 'radial-gradient(white 2px, transparent 2px)',
@@ -73,16 +73,16 @@ const LoginPage = () => {
                     <button
                         type="submit"
                         disabled={loading}
-                        className="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-green-700 hover:bg-green-800 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500"
+                        className="w-full flex justify-center items-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-green-700 hover:bg-green-800 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500"
                     >
                         {loading ? 'Entrando...' : 'Ingresar'}
                         {!loading && <Snowflake className="ml-2 w-4 h-4" />}
                     </button>
-                </form>
-            </div>
 
-            <div className="absolute bottom-4 text-white text-xs opacity-70">
-                © 2024 Campaign Analytics - Edición Especial
+                </form>
+                <div className="text-center text-gray-500 mt-4">
+                    Las credenciales de acceso son: usuario: admin, contraseña: admin123
+                </div>
             </div>
         </div>
     );
