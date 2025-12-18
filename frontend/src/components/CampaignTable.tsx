@@ -2,10 +2,14 @@ import {
     createColumnHelper,
     flexRender,
     getCoreRowModel,
+    getSortedRowModel,
+    SortingState,
     useReactTable,
 } from '@tanstack/react-table';
 import { Campaign } from '../api/client';
 import { useNavigate } from 'react-router-dom';
+import { useState } from 'react';
+import { ArrowUpDown, ArrowUp, ArrowDown } from 'lucide-react';
 
 const columnHelper = createColumnHelper<Campaign>();
 
@@ -46,10 +50,17 @@ interface Props {
 
 const CampaignTable = ({ data, total, page, pageSize, onPageChange }: Props) => {
     const navigate = useNavigate();
+    const [sorting, setSorting] = useState<SortingState>([]);
+
     const table = useReactTable({
         data,
         columns,
+        state: {
+            sorting,
+        },
+        onSortingChange: setSorting,
         getCoreRowModel: getCoreRowModel(),
+        getSortedRowModel: getSortedRowModel(),
     });
 
     const totalPages = Math.ceil(total / pageSize);
@@ -61,8 +72,18 @@ const CampaignTable = ({ data, total, page, pageSize, onPageChange }: Props) => 
                     {table.getHeaderGroups().map(headerGroup => (
                         <tr key={headerGroup.id}>
                             {headerGroup.headers.map(header => (
-                                <th key={header.id} className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                    {flexRender(header.column.columnDef.header, header.getContext())}
+                                <th
+                                    key={header.id}
+                                    className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer hover:bg-gray-100 select-none"
+                                    onClick={header.column.getToggleSortingHandler()}
+                                >
+                                    <div className="flex items-center gap-2">
+                                        {flexRender(header.column.columnDef.header, header.getContext())}
+                                        {{
+                                            asc: <ArrowUp className="h-4 w-4" />,
+                                            desc: <ArrowDown className="h-4 w-4" />,
+                                        }[header.column.getIsSorted() as string] ?? <ArrowUpDown className="h-4 w-4 text-gray-400" />}
+                                    </div>
                                 </th>
                             ))}
                         </tr>
