@@ -1,101 +1,53 @@
-# Aplicación de Análisis de Campañas Publicitarias
+# Aplicacion de Analisis de Campañas Publicitarias
 
-## Instrucciones
-1. Crea un repositorio publico en tu cuenta de github.
-2. Proveer instrucciones para instalar y levantar en ambiente local la APP
+Los pasos necesarios para poder ejecutar este proyecto en local son los siguientes:
+1. Clonar el repositorio
+2. Acceder a la carpeta del backend
+3. Ejecutar el siguiente comando para crear el entorno virtual: 
+```bash
+python -m venv venv
+```
+4. Activar el entorno virtual:
+```bash
+venv\Scripts\activate
+```
+5. Instalar las dependencias:
+```bash
+pip install -r requirements.txt
+```
+6. Inicializar la base de datos:
+```bash
+python seed.py
+```
+7. Ejecutar el servidor con uvicorn:
+```bash
+uvicorn app.main:app --reload
+```
+Y con esto estaria listo el backend para realizar cualquier modificacion y con hot reload podremos ver los cambios en tiempo real.
 
-La evaluación tendra la siguiente forma:
+Por otro lado, para el frontend
+1. Acceder a la carpeta del frontend
+2. Instalar las dependencias:
+```bash
+npm install
+```
+3. Ejecutar el servidor con vite:
+```bash
+npm run dev
+```
+Y con esto estaria listo el frontend para realizar cualquier modificacion
 
-* Back End: 35%
-* Front End: 35%
-* Estructura y legilibilidad del código, incluyendo el uso de buenas prácticas: 30%
-* Bonus points: 20% extra (10% unit tests, 10% deployment en la nube)
+#### Opcional:
+Si necesitas verificar las pruebas necesitas hacer lo siguiente:
+1. Repetir hasta el paso 6 del backend
+2. Ejecutar el siguiente comando en el entorno virtual:
+```bash
+pytest
+```
 
-## Objetivo
-Sobre este este esqueleto, construir un API HTTP y una interfaz de aplicación para visualizar y analizar datos de campañas publicitarias.
+## Documentación
+La documentacion del proyecto se encuentra en la siguiente url al tener levantado el servidor en local: http://127.0.0.1:8000/docs
 
-## Funcionalidades Principales
+## Deploy
+El deploy del proyecto se encuentra en la siguiente url: https://campaing-analytics-wgdu.vercel.app/
 
-### Vista Principal de Campañas
-- Tabla con todas las campañas publicitarias
-- Información detallada: nombre, tipo, fechas, impactos y alcance
-- Paginación de resultados (5 elementos por página)
-
-### Sistema de Filtros
-- **Por Tipo de Campaña:**
-  - Mensual
-  - Catorcenal
-- **Por Rango de Fechas:**
-  - Búsqueda de campañas activas en períodos específicos
-
-### Visualización Detallada
-Al seleccionar una campaña, se pueden ver:
-
-1. **Resumen de Sitios**
-   - Ventana con gráficas de resumen de sitios
-   - Datos desde `bd_campanias_sitios.csv`
-
-2. **Resumen de Períodos**
-   - Ventana con gráficas de desempeño por período
-   - Datos desde `bd_campanias_periodos.csv`
-
-3. **Resumen de Campaña**
-   - Ventana con gráficas de resumen general
-   - Datos desde `bd_campanias_agrupado.csv`
-
-## Stack Tecnológico
-
-### Backend
-
-#### FastAPI (Python)
-- Framework web moderno y rápido
-- Validación automática con Pydantic
-- Documentación automática (Swagger/OpenAPI)
-- Soporte asíncrono
-
-#### SQLAlchemy
-- ORM para Python
-- Manejo de base de datos
-- Modelado de datos
-
-#### Uvicorn
-- Servidor ASGI para Python
-- Alto rendimiento
-- Hot-reload en desarrollo
-
-### Frontend
-
-#### React con TypeScript
-- Framework UI
-- Tipado estático
-- Componentes funcionales y hooks
-
-#### Bibliotecas React
-- `@tanstack/react-table`: Manejo de tablas
-- `react-hook-form`: Gestión de formularios
-- `zod`: Validación de esquemas
-- `axios`: Cliente HTTP
-
-#### Vite
-- Bundler y herramienta de desarrollo
-- Hot Module Replacement (HMR)
-- Configuración mínima
-
-#### CSS
-- Estilos modulares
-- Diseño responsive
-
-## Arquitectura
-
-Sigue un patrón cliente-servidor:
-- Backend: API REST
-- Frontend: Interfaz de usuario
-- Comunicación: HTTP/JSON
-- Separación clara de responsabilidades
-
-## Estructura de Datos
-
-### Archivos CSV
-- `bd_campanias_agrupado.csv`: Datos generales de campañas
-- `bd_campanias_periodos.csv`: Información por períodos
-- `bd_campanias_sitios.csv`: Detalles de sitios publicitarios que componen las campañas
