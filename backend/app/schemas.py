@@ -20,11 +20,11 @@ class CampaignSiteBase(BaseModel):
     estado: str
     municipio: str
     zm: str
-    frecuencia_catorcenal: float
-    frecuencia_mensual: float
-    impactos_catorcenal: int
-    impactos_mensuales: int
-    alcance_mensual: float
+    frecuencia_catorcenal: Optional[float] = None
+    frecuencia_mensual: Optional[float] = None
+    impactos_catorcenal: Optional[int] = None
+    impactos_mensuales: Optional[int] = None
+    alcance_mensual: Optional[float] = None
 
 class CampaignSite(CampaignSiteBase):
     id: int
